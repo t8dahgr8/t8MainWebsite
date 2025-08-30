@@ -7,19 +7,18 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-  <!-- Tailwind theme: finance green + off-white + gold -->
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            primary: '#10936B',       // Emerald finance green
-            primaryDark: '#0A6F51',   // Darker green for hovers
-            gold: '#D4AF37',          // Gold accent
-            offwhite: '#F7F8F3',      // Off-white background / text tint
-            dark: '#0B1D16',          // Deep green-black (page bg)
-            darker: '#08130F',        // Navbar / panels
+            primary: '#10936B',
+            primaryDark: '#0A6F51',
+            gold: '#D4AF37',
+            offwhite: '#F7F8F3',
+            dark: '#0B1D16',
+            darker: '#08130F',
           },
           fontFamily: { sans: ['Inter', 'sans-serif'] }
         }
@@ -27,85 +26,276 @@
     }
   </script>
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+ <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    :root {
-      --green: #10936B;
-      --green-700: #0A6F51;
-      --gold: #D4AF37;
-      --offwhite: #F7F8F3;
-      --dark: #0B1D16;
-      --darker: #08130F;
-    }
+  /* ---------- Theme tokens */
+  :root{
+    /* Dark (default) — unchanged */
+    --page-bg:#0B1D16;
+    --surface:#0F241C;
+    --ink:#E6EEE9;
+    --muted:#CBE7DD;
+    --border:#1E4033;
+  }
 
-    body { font-family: 'Inter', sans-serif; background-color: var(--dark); color: #E6EEE9; }
+  /* Light overrides (only affects .theme-light on <html>) */
+  .theme-light{
+    --page-bg:#F7F8F3;   /* off-white page */
+    --surface:#FFFFFF;   /* cards / panels */
+    --ink:#0B1D16;       /* true black text */
+    --muted:#364A43;     /* readable muted */
+    --border:#D9E6E1;    /* subtle border */
+  }
 
-    .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
-    .skip-link:focus { left: 1rem; top: 1rem; width: auto; height: auto; padding: .5rem .75rem; border-radius: .5rem; background: #0F241C; border: 1px solid #1E4033; }
+  body{ font-family:'Inter',sans-serif; background:var(--page-bg); color:var(--ink); }
 
-    /* Brand gradient: emerald → gold */
-    .gradient-text { background: linear-gradient(90deg, var(--green), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  /* Accessibility: skip link */
+  .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
+  .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.5rem .75rem;border-radius:.5rem;background:#0F241C;border:1px solid #1E4033;}
 
-    .card-hover { transition: all 0.3s ease; }
-    .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(16, 147, 107, 0.2); }
+  /* Brand gradient: emerald → gold (default) */
+  .gradient-text{background:linear-gradient(90deg,#10936B,#D4AF37);-webkit-background-clip:text;background-clip:text;color:transparent;}
 
-    .nav-link { position: relative; color: #CBE7DD; }
-    .nav-link::after { content: ''; position: absolute; left: 0; bottom: -6px; height: 2px; width: 0; background: linear-gradient(90deg, var(--green), var(--gold)); transition: width 0.25s ease; }
-    .nav-link:hover { color: var(--offwhite); }
-    .nav-link:hover::after, .active::after { width: 100%; }
+  .card-hover{transition:all .3s ease;}
+  .card-hover:hover{transform:translateY(-5px);box-shadow:0 10px 25px rgba(16,147,107,.2);}
 
-    .timeline-item::before { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; left: -7px; top: 0; background: linear-gradient(135deg, var(--green), var(--gold)); box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15); }
+  .nav-link{position:relative;color:var(--muted);}
+  .nav-link::after{content:'';position:absolute;left:0;bottom:-6px;height:2px;width:0;background:linear-gradient(90deg,#10936B,#D4AF37);transition:width .25s ease;}
+  .nav-link:hover{color:var(--ink);}
+  .nav-link:hover::after,.active::after{width:100%;}
 
-    .skill-bar { height: 8px; border-radius: 4px; background-color: #123227; }
-    .skill-progress { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--green), var(--gold)); transition: width 1s ease-in-out; }
+  .timeline-item::before{
+    content:'';position:absolute;width:14px;height:14px;border-radius:50%;left:-7px;top:0;
+    background:linear-gradient(135deg,#10936B,#D4AF37);box-shadow:0 0 0 4px rgba(212,175,55,.15);
+  }
 
-    .project-card { background: linear-gradient(145deg, #10271F, #0B1D16); box-shadow: 5px 5px 15px rgba(8, 19, 15, 0.6), -5px -5px 15px rgba(16, 39, 31, 0.35); }
+  .skill-bar{height:8px;border-radius:4px;background:#123227;}
+  .skill-progress{height:100%;border-radius:4px;background:linear-gradient(90deg,#10936B,#D4AF37);transition:width 1s ease-in-out;}
 
-    .contact-input { background-color: #0F241C; border: 1px solid #1E4033; transition: all 0.3s ease; color: #E6EEE9; }
-    .contact-input::placeholder { color: #9FB7AE; }
-    .contact-input:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(16, 147, 107, 0.25); outline: none; }
+  .project-card{background:linear-gradient(145deg,#10271F,#0B1D16);box-shadow:5px 5px 15px rgba(8,19,15,.6),-5px -5px 15px rgba(16,39,31,.35);}
+  .theme-light .project-card{background:#FFFFFF;box-shadow:0 10px 24px rgba(0,0,0,.07),0 1px 0 rgba(0,0,0,.03);}
 
-    .btn-primary { background: linear-gradient(90deg, var(--green), var(--gold)); color: #0A1512; font-weight: 600; transition: all 0.3s ease; }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.35); }
+  .contact-input{background:var(--surface);border:1px solid var(--border);transition:all .3s ease;color:var(--ink);}
+  .contact-input::placeholder{color:#9FB7AE;}
+  .contact-input:focus{border-color:#10936B;box-shadow:0 0 0 2px rgba(16,147,107,.25);outline:none;}
+  .theme-light .contact-input::placeholder{color:#6B8F84;}
 
-    .chip { background-color: #0F241C; border: 1px solid #184233; color: #CFE6DC; }
+  .btn-primary{background:linear-gradient(90deg,#10936B,#D4AF37);color:#0A1512;font-weight:600;transition:all .3s ease;}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(212,175,55,.35);}
 
-    .social-icon { transition: all 0.3s ease; }
-    .social-icon:hover { transform: translateY(-3px); }
+  .chip{background:var(--surface);border:1px solid var(--border);color:#CFE6DC;}
+  .theme-light .chip{color:#0B1D16;background:#F2F6F4;}
 
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    .floating { animation: float 3s ease-in-out infinite; }
+  .social-icon{transition:all .3s ease;border:1px solid var(--border);}
+  .social-icon:hover{transform:translateY(-3px);}
 
-    .ring-emerald-gold { box-shadow: 0 0 0 4px #0F241C, 0 0 0 8px rgba(212, 175, 55, 0.25); }
-  </style>
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .floating{animation:float 3s ease-in-out infinite;}
+
+  .ring-emerald-gold{box-shadow:0 0 0 4px var(--surface),0 0 0 8px rgba(212,175,55,.25);}
+
+  /* Navbar surface helper (theme-swaps) */
+  .nav-surface{background:rgba(8,19,15,.8);}               /* dark: unchanged */
+  .theme-light .nav-surface{
+    background: linear-gradient(90deg, #084B3A 0%, #0A5F49 100%);
+  }
+
+  /* white nav links over the green bar (light mode only) */
+  .theme-light .nav-link{ color:#ffffff; }
+  .theme-light .nav-link:hover{ color:#ffffff; }
+
+  /* Theme menu */
+  .nav-icon-btn{
+    width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:9999px;
+    background:var(--surface);border:1px solid var(--border);color:var(--ink);transition:.15s;
+  }
+  .nav-icon-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(16,147,107,.18);}
+  .menu-surface{background:var(--surface);border:1px solid var(--border);color:var(--ink);}
+  .menu-item{display:flex;align-items:center;gap:.5rem;width:100%;padding:.5rem .75rem;border-radius:.5rem;}
+  .menu-item:hover{background:rgba(16,147,107,.08);}
+
+  /* ---------- Light-mode hardcoded-class fixes */
+  /* turn washed-out Tailwind slate text to true black in light/TAMU modes */
+  .theme-light .text-slate-100,
+  .theme-light .text-slate-200,
+  .theme-light .text-slate-300,
+  .theme-light .text-slate-300\/90,
+  .theme-light .text-slate-300\/85,
+  .theme-light .text-slate-300\/80,
+  .theme-light .text-slate-300\/75,
+  .theme-light .text-slate-400,
+  .theme-tamu  .text-slate-100,
+  .theme-tamu  .text-slate-200,
+  .theme-tamu  .text-slate-300,
+  .theme-tamu  .text-slate-300\/90,
+  .theme-tamu  .text-slate-300\/85,
+  .theme-tamu  .text-slate-300\/80,
+  .theme-tamu  .text-slate-300\/75,
+  .theme-tamu  .text-slate-400 { color:#0B1D16 !important; }
+
+  /* anything using your offwhite color should also go dark in light/TAMU modes */
+  .theme-light [class*="text-offwhite"],
+  .theme-tamu  [class*="text-offwhite"]{ color:var(--ink) !important; }
+
+  /* elements that were hard-coded for the dark palette */
+  .theme-light [class*="bg-[#0F241C]"],
+  .theme-tamu  [class*="bg-[#0F241C]"]{background:var(--surface) !important;}
+  .theme-light [class*="border-[#1E4033]"],
+  .theme-tamu  [class*="border-[#1E4033]"]{border-color:var(--border) !important;}
+  .theme-light [class*="bg-[#153D2F]"]{background:#D9E6E1 !important;} /* timeline vertical line */
+
+  /* page wrappers that use your utility bg classes */
+  .theme-light .bg-dark{background:var(--page-bg) !important;}
+  .theme-light .bg-darker{background:var(--surface) !important;}
+
+  /* small visual tweaks for light mode */
+  .theme-light .skill-bar{ background:#EAF3EF; }
+
+
+  /* =========================
+     TEXAS A&M THEME (maroon + gold)
+     ========================= */
+  .theme-tamu{
+    --page-bg:#FAF7F2;   /* warm cream */
+    --surface:#FFFFFF;   /* cards / panels */
+    --ink:#2B1A1D;       /* deep charcoal with a warm tint */
+    --muted:#6C4A4A;     /* muted maroonish text */
+    --border:#E7D9CF;    /* warm subtle border */
+  }
+
+  .theme-tamu body{ background:var(--page-bg); color:var(--ink); }
+
+  /* Navbar: maroon gradient (white links) */
+  .theme-tamu .nav-surface{
+    background: linear-gradient(90deg, #500000 0%, #7A0011 100%);
+  }
+  .theme-tamu .nav-link{ color:#ffffff; }
+  .theme-tamu .nav-link:hover{ color:#ffffff; }
+
+  /* Brand gradients / section dividers */
+  .theme-tamu .gradient-text{
+    background:linear-gradient(90deg,#7A0011,#D6A461);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  /* Tailwind gradient utility overrides used in your markup */
+  .theme-tamu .from-primary{
+    --tw-gradient-from:#7A0011 var(--tw-gradient-from-position);
+    --tw-gradient-to:rgb(122 0 17 / 0) var(--tw-gradient-to-position);
+    --tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to);
+  }
+  .theme-tamu .to-gold{
+    --tw-gradient-to:#D6A461 var(--tw-gradient-to-position);
+  }
+
+  /* Primary CTAs (gradient button) */
+  .theme-tamu .btn-primary{
+    background:linear-gradient(90deg,#7A0011,#D6A461);
+    color:#ffffff;
+  }
+  .theme-tamu .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 18px rgba(122,0,17,.28);
+  }
+
+  /* Cards / chips / inputs */
+  .theme-tamu .project-card{
+    background:#FFFFFF;
+    box-shadow:0 10px 24px rgba(0,0,0,.07), 0 1px 0 rgba(0,0,0,.03);
+  }
+  .theme-tamu .chip{
+    background:#FFF8F0;
+    border:1px solid var(--border);
+    color:#5A3B3B;
+  }
+  .theme-tamu .contact-input{
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--ink);
+  }
+  .theme-tamu .contact-input::placeholder{ color:#9C7C7C; }
+
+  /* Timeline dots and vertical rule */
+  .theme-tamu .timeline-item::before{
+    background:linear-gradient(135deg,#7A0011,#D6A461);
+    box-shadow:0 0 0 4px rgba(214,164,97,.18);
+  }
+  .theme-tamu [class*="bg-[#153D2F]"]{ background:#E7D9CF !important; }
+
+  /* Social hover = maroon */
+  .theme-tamu .social-icon{ border:1px solid var(--border); }
+  .theme-tamu .social-icon:hover{ background:#7A0011; color:#fff; }
+
+  /* Skills bar track */
+  .theme-tamu .skill-bar{ background:#F1E6DE; }
+
+  /* Photo ring accent (maroon/gold) */
+  .theme-tamu .ring-emerald-gold{
+    box-shadow:0 0 0 4px var(--surface), 0 0 0 8px rgba(214,164,97,.30);
+  }
+
+  /* Override Tailwind custom color utilities that reference your green "primary" + "gold" */
+  .theme-tamu .text-primary{ color:#7A0011 !important; }
+  .theme-tamu .bg-primary{ background-color:#7A0011 !important; }
+  .theme-tamu .hover\:bg-primary:hover{ background-color:#5C000D !important; }
+  .theme-tamu .hover\:bg-primaryDark:hover{ background-color:#4A000B !important; }
+  .theme-tamu .text-gold{ color:#D6A461 !important; }
+  .theme-tamu .border-gold\/70{ border-color:rgba(214,164,97,.7) !important; }
+
+  /* Theme menu hover tint */
+  .theme-tamu .menu-item:hover{ background:rgba(122,0,17,.08); }
+
+  /* Wrappers */
+  .theme-tamu .bg-dark{ background:var(--page-bg) !important; }
+  .theme-tamu .bg-darker{ background:var(--surface) !important; }
+</style>
+
 </head>
 
 <body class="bg-dark text-slate-200">
   <a href="#home" class="skip-link">Skip to content</a>
 
   <!-- Navigation -->
-  <nav class="fixed w-full bg-darker/80 backdrop-blur-sm z-50 shadow-lg" role="navigation" aria-label="Primary">
+  <nav class="fixed w-full nav-surface backdrop-blur-sm z-50 shadow-lg" role="navigation" aria-label="Primary">
     <div class="max-w-7xl mx-auto px-6 py-4">
       <div class="flex justify-between items-center">
         <a href="#home" class="text-2xl font-bold gradient-text">t8c4</a>
-        <div class="md:hidden">
-          <button id="menu-toggle" class="text-slate-200 hover:text-primary focus:outline-none" aria-expanded="false" aria-controls="mobile-menu">
-            <span class="sr-only">Toggle menu</span>
-            <i class="fas fa-bars text-2xl" aria-hidden="true"></i>
-          </button>
+
+        <div class="flex items-center gap-4">
+          <!-- Desktop links -->
+          <ul class="hidden md:flex items-center space-x-8">
+            <li><a href="#home" class="nav-link active">Home</a></li>
+            <li><a href="#skills" class="nav-link">Skills</a></li>
+            <li><a href="#projects" class="nav-link">Projects</a></li>
+            <li><a href="#contact" class="nav-link">Contact</a></li>
+          </ul>
+
+          <!-- Theme switcher -->
+          <div class="relative">
+            <button id="theme-toggle" class="nav-icon-btn" aria-haspopup="true" aria-expanded="false" aria-label="Change color theme">
+              <i id="theme-icon" class="fa-solid fa-moon"></i>
+            </button>
+            <div id="theme-menu" class="menu-surface hidden absolute right-0 mt-2 w-48 rounded-xl shadow-xl p-1">
+              <button class="menu-item theme-item" data-theme="system"><i class="fa-solid fa-circle-half-stroke"></i><span>System</span></button>
+              <button class="menu-item theme-item" data-theme="light"><i class="fa-solid fa-sun"></i><span>Light</span></button>
+              <button class="menu-item theme-item" data-theme="dark"><i class="fa-solid fa-moon"></i><span>Dark</span></button>
+              <button class="menu-item theme-item" data-theme="tamu"><i class="fa-solid fa-building-columns"></i><span>Texas A&amp;M</span></button>
+            </div>
+          </div>
+
+          <!-- Mobile menu button -->
+          <div class="md:hidden">
+            <button id="menu-toggle" class="text-slate-200 hover:text-primary focus:outline-none" aria-expanded="false" aria-controls="mobile-menu">
+              <span class="sr-only">Toggle menu</span>
+              <i class="fas fa-bars text-2xl" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
-        <ul class="hidden md:flex items-center space-x-8">
-          <li><a href="#home" class="nav-link active">Home</a></li>
-          <!-- removed About -->
-          <li><a href="#skills" class="nav-link">Skills</a></li>
-          <li><a href="#projects" class="nav-link">Projects</a></li>
-          <li><a href="#contact" class="nav-link">Contact</a></li>
-        </ul>
       </div>
+
+      <!-- Mobile menu links -->
       <div id="mobile-menu" class="hidden md:hidden mt-3 pb-3 border-t border-[#153D2F]">
         <a href="#home" class="block py-2 nav-link active">Home</a>
-        <!-- removed About -->
         <a href="#skills" class="block py-2 nav-link">Skills</a>
         <a href="#projects" class="block py-2 nav-link">Projects</a>
         <a href="#contact" class="block py-2 nav-link">Contact</a>
@@ -129,10 +319,10 @@
 
         <!-- Social icons -->
         <div class="flex gap-3 mt-6" aria-label="Social links">
-          <a href="mailto:t82020@outlook.com" class="social-icon text-xl w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-primary text-offwhite border border-[#1E4033]" aria-label="Email"><i class="fas fa-envelope"></i></a>
-          <a href="https://www.linkedin.com/in/taytec/" target="_blank" rel="noopener" class="social-icon text-xl w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-[#0A66C2] text-offwhite border border-[#1E4033]" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          <a href="https://github.com/t8dahgr8" target="_blank" rel="noopener" class="social-icon text-xl w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-primary text-offwhite border border-[#1E4033]" aria-label="GitHub"><i class="fab fa-github"></i></a>
-          <a href="https://www.instagram.com/tayte_choudhury/" target="_blank" rel="noopener" class="social-icon text-xl w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-[#E4405F] text-offwhite border border-[#1E4033]" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="mailto:t82020@outlook.com" class="social-icon text-xl w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-primary text-offwhite" aria-label="Email"><i class="fas fa-envelope"></i></a>
+          <a href="https://www.linkedin.com/in/taytec/" target="_blank" rel="noopener" class="social-icon text-xl w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-[#0A66C2] text-offwhite" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://github.com/t8dahgr8" target="_blank" rel="noopener" class="social-icon text-xl w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-primary text-offwhite" aria-label="GitHub"><i class="fab fa-github"></i></a>
+          <a href="https://www.instagram.com/tayte_choudhury/" target="_blank" rel="noopener" class="social-icon text-xl w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-[#E4405F] text-offwhite" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
         </div>
       </aside>
 
@@ -142,7 +332,7 @@
 
         <p class="text-slate-300/90 leading-relaxed max-w-3xl">
           Hello! I’m Tayte Choudhury, currently pursuing a B.S. in Computer Science, an M.S. in Finance, and a
-          minor in Mathematics at Texas A&amp;M University through its Engineering and Business schools.
+          minor in Mathematics at Texas A&amp;M University 
         </p>
         <p class="text-slate-300/90 leading-relaxed mt-4 max-w-3xl">
           I like chicken nuggets
@@ -211,7 +401,7 @@
     </div>
   </section>
 
-  <!-- Experience Timeline (unchanged) -->
+  <!-- Experience Timeline -->
   <section class="py-24 bg-dark">
     <div class="max-w-5xl mx-auto px-6">
       <h3 class="text-2xl font-bold mb-10 text-center">My <span class="gradient-text">Experience</span></h3>
@@ -381,10 +571,10 @@
           <div class="mt-8">
             <h4 class="font-bold mb-4">Follow Me</h4>
             <div class="flex space-x-4">
-              <a href="https://github.com/t8dahgr8" target="_blank" rel="noopener" class="social-icon w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-primary text-offwhite border border-[#1E4033]"><i class="fab fa-github text-xl"></i></a>
-              <a href="https://www.linkedin.com/in/taytec/" target="_blank" rel="noopener" class="social-icon w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-[#0A66C2] border border-[#1E4033]"><i class="fab fa-linkedin-in text-xl"></i></a>
-              <a href="mailto:t82020@outlook.com" class="social-icon w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-primary text-offwhite border border-[#1E4033]"><i class="fas fa-envelope text-xl"></i></a>
-              <a href="https://www.instagram.com/tayte_choudhury/" target="_blank" rel="noopener" class="social-icon w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-[#E4405F] border border-[#1E4033]"><i class="fab fa-instagram text-xl"></i></a>
+              <a href="https://github.com/t8dahgr8" target="_blank" rel="noopener" class="social-icon w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-primary text-offwhite"><i class="fab fa-github text-xl"></i></a>
+              <a href="https://www.linkedin.com/in/taytec/" target="_blank" rel="noopener" class="social-icon w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-[#0A66C2]"><i class="fab fa-linkedin-in text-xl"></i></a>
+              <a href="mailto:t82020@outlook.com" class="social-icon w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-primary text-offwhite"><i class="fas fa-envelope text-xl"></i></a>
+              <a href="https://www.instagram.com/tayte_choudhury/" target="_blank" rel="noopener" class="social-icon w-12 h-12 flex items-center justify-center rounded-full bg-[#0F241C] hover:bg-[#E4405F]"><i class="fab fa-instagram text-xl"></i></a>
             </div>
           </div>
         </div>
@@ -438,7 +628,73 @@
   </button>
 
   <script>
-    // Mobile menu toggle
+    // ---- Theme handling
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const themeBtn = document.getElementById('theme-toggle');
+    const themeMenu = document.getElementById('theme-menu');
+    const themeIcon = document.getElementById('theme-icon');
+    let systemListener = null;
+
+    function setIcon(mode, resolved) {
+      if (mode === 'tamu') {
+        themeIcon.className = 'fa-solid fa-building-columns';
+        themeBtn.setAttribute('aria-label', 'Texas A&M theme');
+        return;
+      }
+      const m = mode === 'system' ? resolved : mode;
+      themeIcon.className = 'fa-solid ' + (m === 'dark' ? 'fa-moon' : 'fa-sun');
+      themeBtn.setAttribute('aria-label', mode === 'system' ? 'System theme' : (m === 'dark' ? 'Dark mode' : 'Light mode'));
+    }
+
+    function applyTheme(mode){
+      document.documentElement.dataset.theme = mode;
+      localStorage.setItem('theme', mode);
+
+      // clear any prior theme-only classes
+      document.documentElement.classList.remove('theme-light','theme-tamu');
+
+      if (systemListener){ prefersDark.removeEventListener('change', systemListener); systemListener = null; }
+
+      if (mode === 'light'){
+        document.documentElement.classList.add('theme-light');
+      } else if (mode === 'dark'){
+        /* dark = default tokens already on :root, nothing to add */
+      } else if (mode === 'tamu'){
+        document.documentElement.classList.add('theme-tamu');
+      } else { // system
+        const dark = prefersDark.matches;
+        // system only swaps the light class; TAMU is user-selected only
+        document.documentElement.classList.toggle('theme-light', !dark);
+        systemListener = (e) => {
+          document.documentElement.classList.toggle('theme-light', !e.matches);
+          setIcon('system', e.matches ? 'dark' : 'light');
+        };
+        prefersDark.addEventListener('change', systemListener);
+      }
+
+      const resolved = mode === 'system' ? (prefersDark.matches ? 'dark' : 'light') : mode;
+      setIcon(mode, resolved);
+    }
+
+    // Initial theme (default to dark if nothing stored)
+    applyTheme(localStorage.getItem('theme') || 'dark');
+
+    // Open/close theme menu
+    themeBtn.addEventListener('click', () => {
+      const open = themeMenu.classList.toggle('hidden');
+      themeBtn.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('click', (e) => {
+      if (!themeMenu.contains(e.target) && !themeBtn.contains(e.target)) themeMenu.classList.add('hidden');
+    });
+    document.querySelectorAll('.theme-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyTheme(btn.dataset.theme);
+        themeMenu.classList.add('hidden');
+      });
+    });
+
+    // ---- Mobile menu toggle
     const menuToggle = document.getElementById('menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     menuToggle.addEventListener('click', () => {
@@ -446,7 +702,7 @@
       menuToggle.setAttribute('aria-expanded', String(!open));
     });
 
-    // Smooth scrolling & active link
+    // ---- Smooth scrolling & active link
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         const hash = this.getAttribute('href');
@@ -460,7 +716,7 @@
       });
     });
 
-    // Active link on scroll + back to top
+    // ---- Active link on scroll + back to top
     window.addEventListener('scroll', () => {
       const scrollPosition = window.scrollY;
       document.querySelectorAll('section[id]').forEach(section => {
@@ -480,7 +736,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // Animate skill bars on scroll
+    // ---- Animate skill bars on scroll
     const animateSkillBars = () => {
       const skillBars = document.querySelectorAll('.skill-progress');
       const skillsSection = document.getElementById('skills');
