@@ -65,9 +65,16 @@
   .nav-link:hover{color:var(--ink);}
   .nav-link:hover::after,.active::after{width:100%;}
 
+  /* timeline: make item positioned and center the dot on the middle rule */
+  .timeline-item{ position:relative; }
   .timeline-item::before{
-    content:'';position:absolute;width:14px;height:14px;border-radius:50%;left:-7px;top:0;
-    background:linear-gradient(135deg,#10936B,#D4AF37);box-shadow:0 0 0 4px rgba(212,175,55,.15);
+    content:'';
+    position:absolute;
+    width:14px;height:14px;border-radius:50%;
+    left:50%; transform:translateX(-50%);
+    top:0; z-index:10;
+    background:linear-gradient(135deg,#10936B,#D4AF37);
+    box-shadow:0 0 0 4px rgba(212,175,55,.15);
   }
 
   .skill-bar{height:8px;border-radius:4px;background:#123227;}
@@ -152,7 +159,6 @@
   /* small visual tweaks for light mode */
   .theme-light .skill-bar{ background:#EAF3EF; }
 
-
   /* =========================
      TEXAS A&M THEME (maroon + gold)
      ========================= */
@@ -178,7 +184,6 @@
     background:linear-gradient(90deg,#7A0011,#D6A461);
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  /* Tailwind gradient utility overrides used in your markup */
   .theme-tamu .from-primary{
     --tw-gradient-from:#7A0011 var(--tw-gradient-from-position);
     --tw-gradient-to:rgb(122 0 17 / 0) var(--tw-gradient-to-position);
@@ -188,7 +193,6 @@
     --tw-gradient-to:#D6A461 var(--tw-gradient-to-position);
   }
 
-  /* Primary CTAs (gradient button) */
   .theme-tamu .btn-primary{
     background:linear-gradient(90deg,#7A0011,#D6A461);
     color:#ffffff;
@@ -198,7 +202,6 @@
     box-shadow:0 6px 18px rgba(122,0,17,.28);
   }
 
-  /* Cards / chips / inputs */
   .theme-tamu .project-card{
     background:#FFFFFF;
     box-shadow:0 10px 24px rgba(0,0,0,.07), 0 1px 0 rgba(0,0,0,.03);
@@ -215,26 +218,21 @@
   }
   .theme-tamu .contact-input::placeholder{ color:#9C7C7C; }
 
-  /* Timeline dots and vertical rule */
   .theme-tamu .timeline-item::before{
     background:linear-gradient(135deg,#7A0011,#D6A461);
     box-shadow:0 0 0 4px rgba(214,164,97,.18);
   }
   .theme-tamu [class*="bg-[#153D2F]"]{ background:#E7D9CF !important; }
 
-  /* Social hover = maroon */
   .theme-tamu .social-icon{ border:1px solid var(--border); }
   .theme-tamu .social-icon:hover{ background:#7A0011; color:#fff; }
 
-  /* Skills bar track */
   .theme-tamu .skill-bar{ background:#F1E6DE; }
 
-  /* Photo ring accent (maroon/gold) */
   .theme-tamu .ring-emerald-gold{
     box-shadow:0 0 0 4px var(--surface), 0 0 0 8px rgba(214,164,97,.30);
   }
 
-  /* Override Tailwind custom color utilities that reference your green "primary" + "gold" */
   .theme-tamu .text-primary{ color:#7A0011 !important; }
   .theme-tamu .bg-primary{ background-color:#7A0011 !important; }
   .theme-tamu .hover\:bg-primary:hover{ background-color:#5C000D !important; }
@@ -242,10 +240,8 @@
   .theme-tamu .text-gold{ color:#D6A461 !important; }
   .theme-tamu .border-gold\/70{ border-color:rgba(214,164,97,.7) !important; }
 
-  /* Theme menu hover tint */
   .theme-tamu .menu-item:hover{ background:rgba(122,0,17,.08); }
 
-  /* Wrappers */
   .theme-tamu .bg-dark{ background:var(--page-bg) !important; }
   .theme-tamu .bg-darker{ background:var(--surface) !important; }
 </style>
@@ -335,7 +331,7 @@
           minor in Mathematics at Texas A&amp;M University 
         </p>
         <p class="text-slate-300/90 leading-relaxed mt-4 max-w-3xl">
-          I like chicken nuggets
+          I aspire to pursue a career in finance, where I can combine my passion for math with my love for problem solving. For me, finance is another medium in which I get to aply mathemical thinking to real-world challenges
         </p>
 
         <!-- Resume -->
@@ -356,7 +352,7 @@
           <div>
             <h3 class="text-2xl font-semibold mb-3">Interests</h3>
             <ul class="list-disc list-inside space-y-2">
-              <li>Quantitative Finance</li>
+              <li>Investment Banking</li>
               <li>Data Science</li>
               <li>Artificial Intelligence</li>
               <li>Stochastic Calculus</li>
@@ -401,35 +397,47 @@
     </div>
   </section>
 
-  <!-- Experience Timeline -->
+  <!-- Experience Timeline (Newest first; start left) -->
   <section class="py-24 bg-dark">
     <div class="max-w-5xl mx-auto px-6">
       <h3 class="text-2xl font-bold mb-10 text-center">My <span class="gradient-text">Experience</span></h3>
       <div class="relative max-w-3xl mx-auto">
         <div class="absolute left-1/2 h-full w-0.5 bg-[#153D2F] transform -translate-x-1/2" aria-hidden="true"></div>
-        <div class="mb-10 flex justify-between items-start w-full timeline-item">
-          <div class="order-1 w-5/12"></div>
-          <div class="order-1 w-5/12 px-5 py-4 bg-[#0F241C] rounded-xl shadow-lg border border-[#1E4033]">
-            <h4 class="text-base font-bold mb-1">Frontend Engineer (Project)</h4>
-            <p class="text-sm text-slate-300/75 mb-2">t8c4 • 2024 – Present</p>
-            <p class="text-offwhite/90">Built a finance-themed portfolio using Tailwind, accessibility patterns, and performance best practices.</p>
-          </div>
-        </div>
+
+        <!-- 2025 — LEFT -->
         <div class="mb-10 flex justify-between items-start w-full timeline-item">
           <div class="order-1 w-5/12 px-5 py-4 bg-[#0F241C] rounded-xl shadow-lg border border-[#1E4033]">
-            <h4 class="text-base font-bold mb-1">Research / Coursework</h4>
-            <p class="text-sm text-slate-300/75 mb-2">Texas A&M • 2023 – Present</p>
-            <p class="text-offwhite/90">Interactive labs, data viz prototypes, and usability studies for student projects.</p>
+            <h4 class="text-base font-bold mb-1">Hardware &amp; Software Engineer</h4>
+            <p class="text-sm text-slate-300/75 mb-2">Switchless • 2025</p>
+            <p class="text-offwhite/90">
+              Developed smart switch systems and PCB schematics; contributed to technical presentations which secured $300K in funding
+            </p>
           </div>
           <div class="order-1 w-5/12"></div>
         </div>
+
+        <!-- 2024 — RIGHT -->
+        <div class="mb-10 flex justify-between items-start w-full timeline-item">
+          <div class="order-1 w-5/12"></div>
+          <div class="order-1 w-5/12 px-5 py-4 bg-[#0F241C] rounded-xl shadow-lg border border-[#1E4033]">
+            <h4 class="text-base font-bold mb-1">Hospice Care Assistant</h4>
+            <p class="text-sm text-slate-300/75 mb-2">Enhabit Hospice • 2024</p>
+            <p class="text-offwhite/90">
+              Provided compassionate end-of-life care for terminally ill patients by supporting daily needs and easing anxieties
+            </p>
+          </div>
+        </div>
+
+        <!-- 2023 — LEFT -->
         <div class="mb-4 flex justify-between items-start w-full timeline-item">
-          <div class="order-1 w-5/12"></div>
           <div class="order-1 w-5/12 px-5 py-4 bg-[#0F241C] rounded-xl shadow-lg border border-[#1E4033]">
-            <h4 class="text-base font-bold mb-1">Open Source Contributor</h4>
-            <p class="text-sm text-slate-300/75 mb-2">GitHub • 2022 – Present</p>
-            <p class="text-offwhite/90">Contributed UI components and docs; improved developer experience.</p>
+            <h4 class="text-base font-bold mb-1">Technical Support Specialist (Level I)</h4>
+            <p class="text-sm text-slate-300/75 mb-2">TanChes • 2023</p>
+            <p class="text-offwhite/90">
+              Resolved hardware/software issues for 100+ users; improved efficiency with troubleshooting docs and server deployment
+            </p>
           </div>
+          <div class="order-1 w-5/12"></div>
         </div>
       </div>
     </div>
@@ -446,19 +454,19 @@
         <div>
           <h3 class="text-2xl font-bold mb-6">Technical</h3>
           <div class="space-y-6">
-            <div><div class="flex justify-between mb-2"><span class="font-medium">HTML/CSS</span><span>95%</span></div><div class="skill-bar"><div class="skill-progress" style="width:95%"></div></div></div>
-            <div><div class="flex justify-between mb-2"><span class="font-medium">JavaScript</span><span>90%</span></div><div class="skill-bar"><div class="skill-progress" style="width:90%"></div></div></div>
-            <div><div class="flex justify-between mb-2"><span class="font-medium">React</span><span>85%</span></div><div class="skill-bar"><div class="skill-progress" style="width:85%"></div></div></div>
-            <div><div class="flex justify-between mb-2"><span class="font-medium">Node.js</span><span>80%</span></div><div class="skill-bar"><div class="skill-progress" style="width:80%"></div></div></div>
+            <div><div class="flex justify-between mb-2"><span class="font-medium">C/C++</span><span>95%</span></div><div class="skill-bar"><div class="skill-progress" style="width:95%"></div></div></div>
+            <div><div class="flex justify-between mb-2"><span class="font-medium">Python</span><span>90%</span></div><div class="skill-bar"><div class="skill-progress" style="width:90%"></div></div></div>
+            <div><div class="flex justify-between mb-2"><span class="font-medium">LaTeX</span><span>85%</span></div><div class="skill-bar"><div class="skill-progress" style="width:85%"></div></div></div>
+            <div><div class="flex justify-between mb-2"><span class="font-medium">React</span><span>80%</span></div><div class="skill-bar"><div class="skill-progress" style="width:80%"></div></div></div>
           </div>
         </div>
         <div>
           <h3 class="text-2xl font-bold mb-6">Professional</h3>
           <div class="space-y-6">
+            <div><div class="flex justify-between mb-2"><span class="font-medium">Problem Solving</span><span>95%</span></div><div class="skill-bar"><div class="skill-progress" style="width:95%"></div></div></div>
+            <div><div class="flex justify-between mb-2"><span class="font-medium">Creativity</span><span>90%</span></div><div class="skill-bar"><div class="skill-progress" style="width:90%"></div></div></div>
             <div><div class="flex justify-between mb-2"><span class="font-medium">Communication</span><span>90%</span></div><div class="skill-bar"><div class="skill-progress" style="width:90%"></div></div></div>
             <div><div class="flex justify-between mb-2"><span class="font-medium">Teamwork</span><span>85%</span></div><div class="skill-bar"><div class="skill-progress" style="width:85%"></div></div></div>
-            <div><div class="flex justify-between mb-2"><span class="font-medium">Problem Solving</span><span>95%</span></div><div class="skill-bar"><div class="skill-progress" style="width:95%"></div></div></div>
-            <div><div class="flex justify-between mb-2"><span class="font-medium">Creativity</span><span>75%</span></div><div class="skill-bar"><div class="skill-progress" style="width:75%"></div></div></div>
           </div>
         </div>
       </div>
@@ -467,18 +475,18 @@
       <div class="mt-16">
         <h3 class="text-2xl font-bold mb-8 text-center">Tools & <span class="gradient-text">Technologies</span></h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-html5 text-4xl text-orange-500 mb-2"></i><span>HTML5</span></div>
-          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-css3-alt text-4xl text-blue-500 mb-2"></i><span>CSS3</span></div>
+          <!-- Languages -->
+          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-html5 text-4xl text-orange-500 mb-2"></i><span>HTML</span></div>
+          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-css3-alt text-4xl text-blue-500 mb-2"></i><span>CSS</span></div>
           <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-js text-4xl text-yellow-400 mb-2"></i><span>JavaScript</span></div>
+          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-python text-4xl text-blue-400 mb-2"></i><span>Python</span></div>
+          <!-- Frameworks / Tools -->
           <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-react text-4xl text-blue-400 mb-2"></i><span>React</span></div>
-          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-node-js text-4xl text-green-500 mb-2"></i><span>Node.js</span></div>
-          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fas fa-database text-4xl text-blue-300 mb-2"></i><span>MongoDB</span></div>
           <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-git-alt text-4xl text-orange-600 mb-2"></i><span>Git</span></div>
-          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-npm text-4xl text-red-500 mb-2"></i><span>npm</span></div>
-          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-sass text-4xl text-pink-500 mb-2"></i><span>Sass</span></div>
-          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-figma text-4xl text-purple-500 mb-2"></i><span>Figma</span></div>
-          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fas fa-terminal text-4xl text-gray-300 mb-2"></i><span>VS Code</span></div>
-          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fab fa-linux text-4xl text-white mb-2"></i><span>Linux</span></div>
+          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fa-brands fa-github text-4xl text-offwhite mb-2"></i><span>GitHub</span></div>
+          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fas fa-superscript text-4xl mb-2"></i><span>LaTeX</span></div>
+          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fas fa-cubes text-4xl mb-2"></i><span>Fusion&nbsp;360</span></div>
+          <div class="flex flex-col items-center p-6 bg-[#0F241C] rounded-lg card-hover border border-[#1E4033]"><i class="fas fa-microchip text-4xl mb-2"></i><span>EasyEDA</span></div>
         </div>
       </div>
     </div>
@@ -616,9 +624,6 @@
         <a href="mailto:t82020@outlook.com" class="hover:text-gold transition"><i class="fas fa-envelope text-xl"></i></a>
         <a href="https://www.instagram.com/tayte_choudhury/" target="_blank" rel="noopener" class="hover:text-gold transition"><i class="fab fa-instagram text-xl"></i></a>
       </div>
-    </div>
-    <div class="border-t border-[#153D2F] mt-6 pt-6 text-center text-slate-400">
-      <p>Made with <i class="fas fa-heart text-red-500"></i> and lots of <i class="fas fa-coffee text-amber-500"></i></p>
     </div>
   </footer>
 
