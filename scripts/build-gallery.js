@@ -22,15 +22,13 @@ function pretty(name){
 }
 
 // ---------------- Album page template ----------------
-function albumHTML({albumName, images}) {
+// ---------------- Album page template (now accepts "cover") ----------------
+function albumHTML({ albumName, images, cover }) {
   // album page sits in /gallery/, so path to images is ../Images/Gallery/<Album>/<file>
   const grid = images.map(fn =>
     `<img class="thumb object-center"
           src="../Images/Gallery/${albumName}/${fn}"
           alt="${fn}">`).join('\n      ');
-
-  // first image as fallback cover
-  const cover = images[0] ? `../Images/Gallery/${albumName}/${images[0]}` : '';
 
   return `<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -41,10 +39,10 @@ function albumHTML({albumName, images}) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root{ --page-bg:#0B1D16; --surface:#0F241C; --ink:#E6EEE9; --muted:#CBE7DD; --border:#1E4033; }
-    .theme-light{ --page-bg:#F7F8F3; --surface:#FFFFFF; --ink:#0B1D16; --muted:#364A43; --border:#D9E61; }
+    .theme-light{ --page-bg:#F7F8F3; --surface:#FFFFFF; --ink:#0B1D16; --muted:#364A43; --border:#D9E6E1; }
     .theme-tamu{ --page-bg:#FAF7F2; --surface:#FFFFFF; --ink:#2B1A1D; --muted:#6C4A4A; --border:#E7D9CF; }
     body{ background:var(--page-bg); color:var(--ink); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
-    .thumb{ border:1px solid var(--border); border-radius:.75rem; width:100%; aspect-ratio: 4/3; object-fit:cover; cursor:zoom-in; }
+    .thumb{ border:1px solid var(--border); border-radius:.75rem; width:100%; aspect-ratio: 4 / 3; object-fit:cover; cursor:zoom-in; }
     #lightbox{ backdrop-filter:saturate(120%) blur(2px); }
   </style>
 </head>
@@ -62,12 +60,15 @@ function albumHTML({albumName, images}) {
     </div>
 
     <h1 class="text-3xl font-bold">${pretty(albumName)}</h1>
-    ${cover ? `<img src="${cover}" alt="" class="mt-6 w-full rounded-lg border border-[color:var(--border)] object-cover hidden">` : ''}
+
+    ${cover ? `<img src="${cover}" alt="${pretty(albumName)} cover"
+           class="mt-6 w-full rounded-lg border border-[color:var(--border)] object-cover" />` : ''}
 
     <div id="grid" class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
       ${grid}
     </div>
 
+    <!-- Lightbox overlay -->
     <div id="lightbox" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 p-4">
       <img id="lb-img" class="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl border border-white/10 block" alt="preview">
       <button id="lb-close" class="absolute top-4 right-4 text-white/90 text-3xl leading-none px-2">×</button>
@@ -83,23 +84,27 @@ function albumHTML({albumName, images}) {
       document.documentElement.classList.remove('theme-light','theme-tamu');
       if(mode==='light') document.documentElement.classList.add('theme-light');
       if(mode==='tamu')  document.documentElement.classList.add('theme-tamu');
-      document.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem('theme',b.dataset.theme);location.reload();}));
+      document.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{
+        localStorage.setItem('theme', b.dataset.theme); location.reload();
+      }));
     })();
 
     // lightbox
     (function(){
       const thumbs = Array.from(document.querySelectorAll('.thumb'));
       const overlay = document.getElementById('lightbox');
-      const imgEl = document.getElementById('lb-img');
-      const prev = document.getElementById('lb-prev');
-      const next = document.getElementById('lb-next');
-      const close = document.getElementById('lb-close');
+      const imgEl   = document.getElementById('lb-img');
+      const prev    = document.getElementById('lb-prev');
+      const next    = document.getElementById('lb-next');
+      const close   = document.getElementById('lb-close');
       let i = 0;
 
-      function openAt(n){ i = (n + thumbs.length) % thumbs.length;
+      function openAt(n){
+        i = (n + thumbs.length) % thumbs.length;
         imgEl.src = thumbs[i].dataset.full || thumbs[i].src;
         imgEl.alt = thumbs[i].alt || 'preview';
-        overlay.classList.remove('hidden'); document.body.style.overflow='hidden'; }
+        overlay.classList.remove('hidden'); document.body.style.overflow='hidden';
+      }
       function closeLB(){ overlay.classList.add('hidden'); imgEl.src=''; document.body.style.overflow=''; }
       function go(d){ openAt(i + d); }
 
@@ -119,6 +124,7 @@ function albumHTML({albumName, images}) {
 </body>
 </html>`;
 }
+
 
 // ------------- Landing page template -------------
 function landingHTML(cards) {
@@ -164,26 +170,45 @@ function landingHTML(cards) {
 // ---------------- Build process ----------------
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
 
+// ---------------- Build each album + landing card (with preferred cover) ----------------
 const albumCards = [];
 
 albums.forEach(album => {
   const albumDir = path.join(SRC_ROOT, album);
+
   const files = fs.readdirSync(albumDir)
     .filter(f => exts.has(path.extname(f).toLowerCase()))
     .sort((a,b)=> a.localeCompare(b, undefined, { numeric:true }));
 
+  // Prefer explicit cover files:
+  //  - Global: Images/Gallery/<Album>-cover.(jpg|jpeg|png)
+  //  - Inside: Images/Gallery/<Album>/cover.(jpg|jpeg|png)
+  const coverCandidates = [
+    path.join(SRC_ROOT, `${album}-cover.jpg`),
+    path.join(SRC_ROOT, `${album}-cover.jpeg`),
+    path.join(SRC_ROOT, `${album}-cover.png`),
+    path.join(albumDir,  'cover.jpg'),
+    path.join(albumDir,  'cover.jpeg'),
+    path.join(albumDir,  'cover.png'),
+  ];
+
+  let coverAbs = coverCandidates.find(p => fs.existsSync(p));
+  if (!coverAbs && files[0]) coverAbs = path.join(albumDir, files[0]); // fallback to first file
+
+  // convert absolute path -> web path
+  const toWeb = abs => abs.replace(process.cwd() + path.sep, '').replace(/\\/g,'/');
+  const coverWeb = coverAbs ? toWeb(coverAbs) : 'https://via.placeholder.com/800x600?text=No+Images';
+
   // write album page
   const outPath = path.join(OUT_DIR, `${album.toLowerCase().replace(/\s+/g,'-')}.html`);
-  fs.writeFileSync(outPath, albumHTML({ albumName: album, images: files }), 'utf8');
+  fs.writeFileSync(outPath, albumHTML({ albumName: album, images: files, cover: coverWeb }), 'utf8');
 
-  // choose cover -> first image
-  const cover = files[0] ? `Images/Gallery/${album}/${files[0]}` : 'https://via.placeholder.com/800x600?text=No+Images';
-  const link  = `gallery/${album.toLowerCase().replace(/\s+/g,'-')}.html`;
-
+  // landing card
+  const link = `gallery/${album.toLowerCase().replace(/\s+/g,'-')}.html`;
   albumCards.push(`
   <a href="${link}" class="card block">
     <div class="aspect-[4/3] overflow-hidden">
-      <img src="${cover}" alt="${album} cover" class="w-full h-full object-cover">
+      <img src="${coverWeb}" alt="${album} cover" class="w-full h-full object-cover">
     </div>
     <div class="p-5">
       <h3 class="text-xl font-semibold">${pretty(album)}</h3>
@@ -191,6 +216,10 @@ albums.forEach(album => {
     </div>
   </a>`);
 });
+
+// (your code that writes gallery.html using albumCards stays the same)
+
+
 
 // write/overwrite gallery.html landing
 fs.writeFileSync(LANDING, landingHTML(albumCards.join('\n')), 'utf8');

@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root{ --page-bg:#0B1D16; --surface:#0F241C; --ink:#E6EEE9; --muted:#CBE7DD; --border:#1E4033; }
-    .theme-light{ --page-bg:#F7F8F3; --surface:#FFFFFF; --ink:#0B1D16; --muted:#364A43; --border:#D9E61; }
+    .theme-light{ --page-bg:#F7F8F3; --surface:#FFFFFF; --ink:#0B1D16; --muted:#364A43; --border:#D9E6E1; }
     .theme-tamu{ --page-bg:#FAF7F2; --surface:#FFFFFF; --ink:#2B1A1D; --muted:#6C4A4A; --border:#E7D9CF; }
     body{ background:var(--page-bg); color:var(--ink); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
-    .thumb{ border:1px solid var(--border); border-radius:.75rem; width:100%; aspect-ratio: 4/3; object-fit:cover; cursor:zoom-in; }
+    .thumb{ border:1px solid var(--border); border-radius:.75rem; width:100%; aspect-ratio: 4 / 3; object-fit:cover; cursor:zoom-in; }
     #lightbox{ backdrop-filter:saturate(120%) blur(2px); }
   </style>
 </head>
@@ -28,7 +28,9 @@
     </div>
 
     <h1 class="text-3xl font-bold">Carnegie</h1>
-    <img src="../Images/Gallery/Carnegie/American_Protege_06-26-2022-2140.jpg" alt="" class="mt-6 w-full rounded-lg border border-[color:var(--border)] object-cover hidden">
+
+    <img src="Images/Gallery/Carnegie-cover.jpg" alt="Carnegie cover"
+           class="mt-6 w-full rounded-lg border border-[color:var(--border)] object-cover" />
 
     <div id="grid" class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
       <img class="thumb object-center"
@@ -381,6 +383,7 @@
           alt="American_Protege_06-26-2022-2255.jpg">
     </div>
 
+    <!-- Lightbox overlay -->
     <div id="lightbox" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 p-4">
       <img id="lb-img" class="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl border border-white/10 block" alt="preview">
       <button id="lb-close" class="absolute top-4 right-4 text-white/90 text-3xl leading-none px-2">×</button>
@@ -396,23 +399,27 @@
       document.documentElement.classList.remove('theme-light','theme-tamu');
       if(mode==='light') document.documentElement.classList.add('theme-light');
       if(mode==='tamu')  document.documentElement.classList.add('theme-tamu');
-      document.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem('theme',b.dataset.theme);location.reload();}));
+      document.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{
+        localStorage.setItem('theme', b.dataset.theme); location.reload();
+      }));
     })();
 
     // lightbox
     (function(){
       const thumbs = Array.from(document.querySelectorAll('.thumb'));
       const overlay = document.getElementById('lightbox');
-      const imgEl = document.getElementById('lb-img');
-      const prev = document.getElementById('lb-prev');
-      const next = document.getElementById('lb-next');
-      const close = document.getElementById('lb-close');
+      const imgEl   = document.getElementById('lb-img');
+      const prev    = document.getElementById('lb-prev');
+      const next    = document.getElementById('lb-next');
+      const close   = document.getElementById('lb-close');
       let i = 0;
 
-      function openAt(n){ i = (n + thumbs.length) % thumbs.length;
+      function openAt(n){
+        i = (n + thumbs.length) % thumbs.length;
         imgEl.src = thumbs[i].dataset.full || thumbs[i].src;
         imgEl.alt = thumbs[i].alt || 'preview';
-        overlay.classList.remove('hidden'); document.body.style.overflow='hidden'; }
+        overlay.classList.remove('hidden'); document.body.style.overflow='hidden';
+      }
       function closeLB(){ overlay.classList.add('hidden'); imgEl.src=''; document.body.style.overflow=''; }
       function go(d){ openAt(i + d); }
 
