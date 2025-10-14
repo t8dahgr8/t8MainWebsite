@@ -1,30 +1,29 @@
 // scripts/build-gallery.js
 // Build static gallery pages from folders in Images/Gallery/*
+// Run:  npm run build:gallery
 
 const fs = require('fs');
 const path = require('path');
 
-// ---- Config: album source folder and output paths ----
+/* ---------- CONFIG ---------- */
 const SRC_ROOT = path.join(process.cwd(), 'Images', 'Gallery'); // Images/Gallery/*
 const OUT_DIR  = path.join(process.cwd(), 'gallery');           // /gallery/*.html
-const LANDING  = path.join(process.cwd(), 'gallery.html');      // gallery landing page
+const LANDING  = path.join(process.cwd(), 'gallery.html');      // gallery landing
+const exts = new Set(['.jpg','.jpeg','.png','.webp','.gif','.bmp','.svg']);
 
-// Which folders get albums? Any subfolder under Images/Gallery
+/* ---------- helpers ---------- */
+function pretty(name){
+  return name.replace(/[-_]+/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+function ensureDir(p){ if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true }); }
+
+/* ---------- discover albums (subfolders of Images/Gallery) ---------- */
 const albums = fs.readdirSync(SRC_ROOT, { withFileTypes: true })
   .filter(d => d.isDirectory())
   .map(d => d.name); // e.g. ['Carnegie','Korea']
 
-// allowed image extensions
-const exts = new Set(['.jpg','.jpeg','.png','.webp','.gif','.bmp','.svg']);
-
-function pretty(name){
-  return name.replace(/[-_]+/g,' ').replace(/\b\w/g, c => c.toUpperCase());
-}
-
-// ---------------- Album page template ----------------
-// ---------------- Album page template (now accepts "cover") ----------------
+/* ---------- album page template (accepts "cover") ---------- */
 function albumHTML({ albumName, images, cover }) {
-  // album page sits in /gallery/, so path to images is ../Images/Gallery/<Album>/<file>
   const grid = images.map(fn =>
     `<img class="thumb object-center"
           src="../Images/Gallery/${albumName}/${fn}"
@@ -125,8 +124,7 @@ function albumHTML({ albumName, images, cover }) {
 </html>`;
 }
 
-
-// ------------- Landing page template -------------
+/* ---------- landing page template ---------- */
 function landingHTML(cards) {
   return `<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -167,10 +165,9 @@ function landingHTML(cards) {
 </html>`;
 }
 
-// ---------------- Build process ----------------
-if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
+/* ---------- build ---------- */
+ensureDir(OUT_DIR);
 
-// ---------------- Build each album + landing card (with preferred cover) ----------------
 const albumCards = [];
 
 albums.forEach(album => {
@@ -181,8 +178,8 @@ albums.forEach(album => {
     .sort((a,b)=> a.localeCompare(b, undefined, { numeric:true }));
 
   // Prefer explicit cover files:
-  //  - Global: Images/Gallery/<Album>-cover.(jpg|jpeg|png)
-  //  - Inside: Images/Gallery/<Album>/cover.(jpg|jpeg|png)
+  // Global: Images/Gallery/<Album>-cover.(jpg|jpeg|png)
+  // Inside: Images/Gallery/<Album>/cover.(jpg|jpeg|png)
   const coverCandidates = [
     path.join(SRC_ROOT, `${album}-cover.jpg`),
     path.join(SRC_ROOT, `${album}-cover.jpeg`),
@@ -193,17 +190,20 @@ albums.forEach(album => {
   ];
 
   let coverAbs = coverCandidates.find(p => fs.existsSync(p));
-  if (!coverAbs && files[0]) coverAbs = path.join(albumDir, files[0]); // fallback to first file
+  if (!coverAbs && files[0]) coverAbs = path.join(albumDir, files[0]); // fallback
 
-  // convert absolute path -> web path
+  // Convert absolute -> web path (relative to repo root)
   const toWeb = abs => abs.replace(process.cwd() + path.sep, '').replace(/\\/g,'/');
   const coverWeb = coverAbs ? toWeb(coverAbs) : 'https://via.placeholder.com/800x600?text=No+Images';
 
-  // write album page
-  const outPath = path.join(OUT_DIR, `${album.toLowerCase().replace(/\s+/g,'-')}.html`);
-  fs.writeFileSync(outPath, albumHTML({ albumName: album, images: files, cover: coverWeb }), 'utf8');
+  // Album page lives in /gallery/, so it needs ../ to reach /Images/...
+  const coverForAlbum = coverWeb.startsWith('Images/') ? `../${coverWeb}` : coverWeb;
 
-  // landing card
+  // Write album page
+  const outPath = path.join(OUT_DIR, `${album.toLowerCase().replace(/\s+/g,'-')}.html`);
+  fs.writeFileSync(outPath, albumHTML({ albumName: album, images: files, cover: coverForAlbum }), 'utf8');
+
+  // Build card for landing (gallery.html) – landing sits at root, so coverWeb is correct
   const link = `gallery/${album.toLowerCase().replace(/\s+/g,'-')}.html`;
   albumCards.push(`
   <a href="${link}" class="card block">
@@ -217,11 +217,7 @@ albums.forEach(album => {
   </a>`);
 });
 
-// (your code that writes gallery.html using albumCards stays the same)
-
-
-
-// write/overwrite gallery.html landing
+// Write / overwrite gallery.html landing
 fs.writeFileSync(LANDING, landingHTML(albumCards.join('\n')), 'utf8');
 
 console.log(`Built ${albums.length} album(s).`);
