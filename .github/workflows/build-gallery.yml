@@ -5,47 +5,73 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency:
+  group: build-gallery
+  cancel-in-progress: true
+
 jobs:
   build:
-    if: github.actor != 'github-actions[bot]'   # avoid loops
+    # Avoid infinite loops when this workflow commits back to main
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Install HEIC tools
+      # Tools needed to read HEIC and process images
+      - name: Install HEIC / ImageMagick tools
         run: |
           sudo apt-get update
           sudo apt-get install -y libheif-examples imagemagick
 
+      # Convert HEIC -> JPG and normalize orientation/size for all JPGs
       - name: Convert HEIC images to JPG (auto-orient)
+        shell: bash
         run: |
-            shopt -s globstar nullglob
+          set -e
+          shopt -s globstar nullglob
 
-            # Convert *.heic -> *.jpg with auto-orient baked into the pixels
-            for f in Images/Gallery/**/*.[Hh][Ee][Ii][Cc]; do
+          # Pick ImageMagick CLI (IM7 uses 'magick', IM6 uses 'convert')
+          if command -v magick >/dev/null 2>&1; then
+            IM="magick"
+          elif command -v convert >/dev/null 2>&1; then
+            IM="convert"
+          else
+            echo "ImageMagick not found"; exit 1
+          fi
+          echo "Using ImageMagick: $IM"
+
+          # Convert every HEIC to a real JPG with rotation baked into pixels
+          for f in Images/Gallery/**/*.[Hh][Ee][Ii][Cc]; do
             jpg="${f%.*}.jpg"
             echo "Converting $f -> $jpg"
-            # Prefer ImageMagick (handles EXIF orientation); fall back to heif-convert if needed
-            magick "$f" -auto-orient -strip -quality 85 "$jpg" || heif-convert "$f" "$jpg"
+            $IM "$f" -auto-orient -strip -quality 85 "$jpg" || heif-convert "$f" "$jpg"
             rm -f "$f"
-            done
+          done
 
-            # Safety pass: ensure **all** jpgs in the tree are auto-oriented and web-friendly
-            magick mogrify -auto-orient -strip -quality 85 -resize "2048x2048>" Images/Gallery/**/*.jpg
+          # Safety pass: normalize **all** JPGs in the gallery tree
+          # - auto-orient again (covers already-jpg files)
+          # - strip EXIF
+          # - bound max dimension (adjust 2048 if you want)
+          mogrify -auto-orient -strip -quality 85 -resize "2048x2048>" Images/Gallery/**/*.jpg
 
-
-
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - run: npm ci
-      - run: node scripts/build-gallery.js
+      - name: Install dependencies
+        run: npm ci
 
-      - uses: EndBug/add-and-commit@v9
+      - name: Build gallery pages
+        run: node scripts/build-gallery.js
+
+      # Commit the converted JPGs and rebuilt HTML back to main
+      - name: Commit and push changes
+        uses: EndBug/add-and-commit@v9
         with:
-          message: "CI: convert HEIC and rebuild gallery"
+          message: "CI: convert HEIC, normalize JPGs, and rebuild gallery"
           add: "."
