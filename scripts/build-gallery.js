@@ -1,15 +1,18 @@
 // scripts/build-gallery.js
 // Build static gallery pages from folders in Images/Gallery/*
+// Also auto-convert .heic to .jpg using sharp.
 // Run:  npm run build:gallery
 
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
 
 /* ---------- CONFIG ---------- */
 const SRC_ROOT = path.join(process.cwd(), 'Images', 'Gallery'); // Images/Gallery/*
 const OUT_DIR  = path.join(process.cwd(), 'gallery');           // /gallery/*.html
 const LANDING  = path.join(process.cwd(), 'gallery.html');      // gallery landing
-const exts = new Set(['.jpg','.jpeg','.png','.webp','.gif','.bmp','.svg']);
+// include .heic so we pick them up and convert:
+const exts = new Set(['.jpg','.jpeg','.png','.webp','.gif','.bmp','.svg','.heic']);
 
 /* ---------- helpers ---------- */
 function pretty(name){
@@ -20,31 +23,52 @@ function ensureDir(p){ if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true 
 const toWeb = abs => abs.replace(process.cwd() + path.sep, '').replace(/\\/g,'/');
 
 // Case-insensitive cover lookup:
-//  - Images/Gallery/<Album>-cover.(jpg|jpeg|png)
-//  - Images/Gallery/<Album>/cover.(jpg|jpeg|png)
+//  - Images/Gallery/<Album>-cover.(jpg|jpeg|png|heic)
+//  - Images/Gallery/<Album>/cover.(jpg|jpeg|png|heic)
 function findCoverAbs(album){
   const rootFiles  = fs.readdirSync(SRC_ROOT);
   const albumDir   = path.join(SRC_ROOT, album);
   const albumFiles = fs.readdirSync(albumDir);
 
-  const reRoot  = new RegExp(`^${album}-cover\\.(jpg|jpeg|png)$`, 'i');
+  const reRoot  = new RegExp(`^${album}-cover\\.(jpg|jpeg|png|heic)$`, 'i');
   const rootHit = rootFiles.find(f => reRoot.test(f));
   if (rootHit) return path.join(SRC_ROOT, rootHit);
 
-  const reAlbum  = /^cover\.(jpg|jpeg|png)$/i;
+  const reAlbum  = /^cover\.(jpg|jpeg|png|heic)$/i;
   const albumHit = albumFiles.find(f => reAlbum.test(f));
   if (albumHit) return path.join(albumDir, albumHit);
 
   return null;
 }
 
+/* ---- HEIC → JPG converter (returns the path to a real JPG; if already jpg, returns original) ---- */
+async function toJpgIfHeic(absPath) {
+  const ext = path.extname(absPath).toLowerCase();
+  if (ext !== '.heic') return absPath;
+
+  const jpgPath = absPath.replace(/\.(heic)$/i, '.jpg');
+  if (fs.existsSync(jpgPath)) return jpgPath; // already converted in a previous run
+
+  try {
+    // limitInputPixels prevents failures on huge HEICs; adjust as needed.
+    await sharp(absPath, { limitInputPixels: false })
+      .rotate()                     // honor EXIF orientation
+      .jpeg({ quality: 85 })        // web-friendly quality
+      .toFile(jpgPath);
+    return jpgPath;
+  } catch (err) {
+    console.error('HEIC convert failed:', absPath, err.message);
+    return absPath; // fallback (will break in browser, but avoids crashing build)
+  }
+}
+
 /* ---------- discover albums (subfolders of Images/Gallery) ---------- */
 const albums = fs.readdirSync(SRC_ROOT, { withFileTypes: true })
   .filter(d => d.isDirectory())
-  .map(d => d.name); // e.g. ['Carnegie','Korea']
+  .map(d => d.name); // e.g. ['Carnegie Hall','Korea']
 
 /* ---------- album page template (accepts "cover") ---------- */
-function albumHTML({ albumName, images, cover }) {
+function albumHTML({ albumName, displayTitle, images, cover }) {
   const grid = images.map(fn =>
     `<img class="thumb object-center"
           src="../Images/Gallery/${albumName}/${fn}"
@@ -54,12 +78,12 @@ function albumHTML({ albumName, images, cover }) {
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>${pretty(albumName)} – Gallery – Tayte Choudhury</title>
+  <title>${displayTitle} – Gallery – Tayte Choudhury</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root{ --page-bg:#0B1D16; --surface:#0F241C; --ink:#E6EEE9; --muted:#CBE7DD; --border:#1E4033; }
-    .theme-light{ --page-bg:#F7F8F3; --surface:#FFFFFF; --ink:#0B1D16; --muted:#364A43; --border:#D9E6E1; }
+    .theme-light{ --page-bg:#F7F8F3; --surface:#FFFFFF; --ink:#0B1D16; --muted:#364A43; --border:#D9E61; }
     .theme-tamu{ --page-bg:#FAF7F2; --surface:#FFFFFF; --ink:#2B1A1D; --muted:#6C4A4A; --border:#E7D9CF; }
     body{ background:var(--page-bg); color:var(--ink); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
     .thumb{ border:1px solid var(--border); border-radius:.75rem; width:100%; aspect-ratio: 4 / 3; object-fit:cover; cursor:zoom-in; }
@@ -79,9 +103,9 @@ function albumHTML({ albumName, images, cover }) {
       </div>
     </div>
 
-    <h1 class="text-3xl font-bold">${pretty(albumName)}</h1>
+    <h1 class="text-3xl font-bold">${displayTitle}</h1>
 
-    ${cover ? `<img src="${cover}" alt="${pretty(albumName)} cover"
+    ${cover ? `<img src="${cover}" alt="${displayTitle} cover"
            class="mt-6 w-full rounded-lg border border-[color:var(--border)] object-cover" />` : ''}
 
     <div id="grid" class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -98,7 +122,6 @@ function albumHTML({ albumName, images, cover }) {
   </main>
 
   <script>
-    // theme inherit
     (function(){
       const mode = localStorage.getItem('theme') || 'dark';
       document.documentElement.classList.remove('theme-light','theme-tamu');
@@ -109,7 +132,6 @@ function albumHTML({ albumName, images, cover }) {
       }));
     })();
 
-    // lightbox
     (function(){
       const thumbs = Array.from(document.querySelectorAll('.thumb'));
       const overlay = document.getElementById('lightbox');
@@ -187,43 +209,63 @@ function landingHTML(cards) {
 }
 
 /* ---------- build ---------- */
-ensureDir(OUT_DIR);
+async function main () {
+  ensureDir(OUT_DIR);
 
-const albumCards = [];
+  const albumCards = [];
 
-albums.forEach(album => {
-  const albumDir = path.join(SRC_ROOT, album);
+  for (const album of albums) {
+    const albumDir = path.join(SRC_ROOT, album);
 
-  const files = fs.readdirSync(albumDir)
-    .filter(f => exts.has(path.extname(f).toLowerCase()))
-    .sort((a,b)=> a.localeCompare(b, undefined, { numeric:true }));
+    // list all files (including heic) and sort
+    const filesRaw = fs.readdirSync(albumDir)
+      .filter(f => exts.has(path.extname(f).toLowerCase()))
+      .sort((a,b)=> a.localeCompare(b, undefined, { numeric:true }));
 
-  // Prefer explicit cover files (case-insensitive), else first image
-  let coverAbs = findCoverAbs(album);
-  if (!coverAbs && files[0]) coverAbs = path.join(albumDir, files[0]);
+    // convert any HEICs to JPGs (if needed) and return basenames
+    const filesAbs = filesRaw.map(f => path.join(albumDir, f));
+    const filesJpgAbs = [];
+    for (const p of filesAbs) filesJpgAbs.push(await toJpgIfHeic(p));
+    const files = filesJpgAbs.map(p => path.basename(p));
 
-  const coverWeb = coverAbs ? toWeb(coverAbs) : 'https://via.placeholder.com/800x600?text=No+Images';
-  const coverForAlbum = coverWeb.startsWith('Images/') ? `../${coverWeb}` : coverWeb;
+    // find cover, convert if HEIC
+    let coverAbs = findCoverAbs(album);
+    if (!coverAbs && filesJpgAbs[0]) coverAbs = filesJpgAbs[0];
+    if (coverAbs) coverAbs = await toJpgIfHeic(coverAbs);
 
-  // Write album page
-  const outPath = path.join(OUT_DIR, `${album.toLowerCase().replace(/\s+/g,'-')}.html`);
-  fs.writeFileSync(outPath, albumHTML({ albumName: album, images: files, cover: coverForAlbum }), 'utf8');
+    const coverWeb = coverAbs ? toWeb(coverAbs) : 'https://via.placeholder.com/800x600?text=No+Images';
+    const coverForAlbum = coverWeb.startsWith('Images/') ? `../${coverWeb}` : coverWeb;
 
-  // Landing card (gallery.html)
-  const link = `gallery/${album.toLowerCase().replace(/\s+/g,'-')}.html`;
-  albumCards.push(`
-  <a href="${link}" class="card block">
-    <div class="aspect-[4/3] overflow-hidden">
-      <img src="${coverWeb}" alt="${album} cover" class="w-full h-full object-cover">
-    </div>
-    <div class="p-5">
-      <h3 class="text-xl font-semibold">${pretty(album)}</h3>
-      <div class="mt-4"><span class="btn text-sm">View Album</span></div>
-    </div>
-  </a>`);
+    // Write album page
+    const outPath = path.join(OUT_DIR, `${album.toLowerCase().replace(/\s+/g,'-')}.html`);
+    fs.writeFileSync(outPath, albumHTML({
+      albumName: album,
+      displayTitle: pretty(album),
+      images: files,
+      cover: coverForAlbum
+    }), 'utf8');
+
+    // Landing card (gallery.html)
+    const link = `gallery/${album.toLowerCase().replace(/\s+/g,'-')}.html`;
+    albumCards.push(`
+    <a href="${link}" class="card block">
+      <div class="aspect-[4/3] overflow-hidden">
+        <img src="${coverWeb}" alt="${pretty(album)} cover" class="w-full h-full object-cover">
+      </div>
+      <div class="p-5">
+        <h3 class="text-xl font-semibold">${pretty(album)}</h3>
+        <div class="mt-4"><span class="btn text-sm">View Album</span></div>
+      </div>
+    </a>`);
+  }
+
+  // Write / overwrite gallery.html landing
+  fs.writeFileSync(LANDING, landingHTML(albumCards.join('\n')), 'utf8');
+
+  console.log(`Built ${albums.length} album(s).`);
+}
+
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
 });
-
-// Write / overwrite gallery.html landing
-fs.writeFileSync(LANDING, landingHTML(albumCards.join('\n')), 'utf8');
-
-console.log(`Built ${albums.length} album(s).`);
