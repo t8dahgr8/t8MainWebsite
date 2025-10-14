@@ -3,26 +3,18 @@ name: Build gallery
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'Images/Gallery/**'
-      - 'scripts/build-gallery.js'
-      - 'package.json'
-      - 'package-lock.json'
   workflow_dispatch:
 
-# Avoid infinite loops when the bot commits back to main
 jobs:
   build:
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]'   # avoid loops
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # needed to push the converted images and rebuilt pages
+      contents: write
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # Convert .heic -> .jpg (Ubuntu has heif tools)
       - name: Install HEIC tools
         run: |
           sudo apt-get update
@@ -31,31 +23,21 @@ jobs:
       - name: Convert HEIC images to JPG
         run: |
           shopt -s globstar nullglob
-          changed=0
           for f in Images/Gallery/**/*.[Hh][Ee][Ii][Cc]; do
             jpg="${f%.*}.jpg"
             echo "Converting $f -> $jpg"
             heif-convert "$f" "$jpg" || magick "$f" -auto-orient -quality 85 "$jpg"
             rm -f "$f"
-            changed=1
           done
-          echo "changed=$changed" >> $GITHUB_OUTPUT
-        id: convert
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install deps
-        run: npm ci
+      - run: npm ci
+      - run: node scripts/build-gallery.js
 
-      - name: Build gallery pages
-        run: node scripts/build-gallery.js
-
-      # Commit the converted jpgs and the rebuilt /gallery/*.html and gallery.html
-      - name: Commit & push
-        uses: EndBug/add-and-commit@v9
+      - uses: EndBug/add-and-commit@v9
         with:
           message: "CI: convert HEIC and rebuild gallery"
           add: "."
