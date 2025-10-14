@@ -16,6 +16,27 @@ function pretty(name){
   return name.replace(/[-_]+/g,' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 function ensureDir(p){ if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true }); }
+// Convert absolute path to web path relative to repo root
+const toWeb = abs => abs.replace(process.cwd() + path.sep, '').replace(/\\/g,'/');
+
+// Case-insensitive cover lookup:
+//  - Images/Gallery/<Album>-cover.(jpg|jpeg|png)
+//  - Images/Gallery/<Album>/cover.(jpg|jpeg|png)
+function findCoverAbs(album){
+  const rootFiles  = fs.readdirSync(SRC_ROOT);
+  const albumDir   = path.join(SRC_ROOT, album);
+  const albumFiles = fs.readdirSync(albumDir);
+
+  const reRoot  = new RegExp(`^${album}-cover\\.(jpg|jpeg|png)$`, 'i');
+  const rootHit = rootFiles.find(f => reRoot.test(f));
+  if (rootHit) return path.join(SRC_ROOT, rootHit);
+
+  const reAlbum  = /^cover\.(jpg|jpeg|png)$/i;
+  const albumHit = albumFiles.find(f => reAlbum.test(f));
+  if (albumHit) return path.join(albumDir, albumHit);
+
+  return null;
+}
 
 /* ---------- discover albums (subfolders of Images/Gallery) ---------- */
 const albums = fs.readdirSync(SRC_ROOT, { withFileTypes: true })
@@ -60,7 +81,7 @@ function albumHTML({ albumName, images, cover }) {
 
     <h1 class="text-3xl font-bold">${pretty(albumName)}</h1>
 
-    ${cover ? `<img src="${cover}" alt="${pretty(albumName)} cover"
+    ${cover ? `<img src="\${cover}" alt="${pretty(albumName)} cover"
            class="mt-6 w-full rounded-lg border border-[color:var(--border)] object-cover" />` : ''}
 
     <div id="grid" class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -177,33 +198,18 @@ albums.forEach(album => {
     .filter(f => exts.has(path.extname(f).toLowerCase()))
     .sort((a,b)=> a.localeCompare(b, undefined, { numeric:true }));
 
-  // Prefer explicit cover files:
-  // Global: Images/Gallery/<Album>-cover.(jpg|jpeg|png)
-  // Inside: Images/Gallery/<Album>/cover.(jpg|jpeg|png)
-  const coverCandidates = [
-    path.join(SRC_ROOT, `${album}-cover.jpg`),
-    path.join(SRC_ROOT, `${album}-cover.jpeg`),
-    path.join(SRC_ROOT, `${album}-cover.png`),
-    path.join(albumDir,  'cover.jpg'),
-    path.join(albumDir,  'cover.jpeg'),
-    path.join(albumDir,  'cover.png'),
-  ];
+  // Prefer explicit cover files (case-insensitive), else first image
+  let coverAbs = findCoverAbs(album);
+  if (!coverAbs && files[0]) coverAbs = path.join(albumDir, files[0]);
 
-  let coverAbs = coverCandidates.find(p => fs.existsSync(p));
-  if (!coverAbs && files[0]) coverAbs = path.join(albumDir, files[0]); // fallback
-
-  // Convert absolute -> web path (relative to repo root)
-  const toWeb = abs => abs.replace(process.cwd() + path.sep, '').replace(/\\/g,'/');
   const coverWeb = coverAbs ? toWeb(coverAbs) : 'https://via.placeholder.com/800x600?text=No+Images';
-
-  // Album page lives in /gallery/, so it needs ../ to reach /Images/...
   const coverForAlbum = coverWeb.startsWith('Images/') ? `../${coverWeb}` : coverWeb;
 
   // Write album page
   const outPath = path.join(OUT_DIR, `${album.toLowerCase().replace(/\s+/g,'-')}.html`);
   fs.writeFileSync(outPath, albumHTML({ albumName: album, images: files, cover: coverForAlbum }), 'utf8');
 
-  // Build card for landing (gallery.html) – landing sits at root, so coverWeb is correct
+  // Landing card (gallery.html)
   const link = `gallery/${album.toLowerCase().replace(/\s+/g,'-')}.html`;
   albumCards.push(`
   <a href="${link}" class="card block">
