@@ -81,7 +81,7 @@ function albumHTML({ albumName, images, cover }) {
 
     <h1 class="text-3xl font-bold">${pretty(albumName)}</h1>
 
-    ${cover ? `<img src="\${cover}" alt="${pretty(albumName)} cover"
+    ${cover ? `<img src="${cover}" alt="${pretty(albumName)} cover"
            class="mt-6 w-full rounded-lg border border-[color:var(--border)] object-cover" />` : ''}
 
     <div id="grid" class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
