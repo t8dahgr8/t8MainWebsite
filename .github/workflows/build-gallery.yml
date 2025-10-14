@@ -19,16 +19,22 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libheif-examples imagemagick
-
       - name: Convert HEIC images to JPG
         run: |
-          shopt -s globstar nullglob
-          for f in Images/Gallery/**/*.[Hh][Ee][Ii][Cc]; do
+            shopt -s globstar nullglob
+
+            # Convert *.heic -> *.jpg
+            for f in Images/Gallery/**/*.[Hh][Ee][Ii][Cc]; do
             jpg="${f%.*}.jpg"
             echo "Converting $f -> $jpg"
-            heif-convert "$f" "$jpg" || magick "$f" -auto-orient -quality 85 "$jpg"
+            heif-convert "$f" "$jpg" || magick "$f" "$jpg"
             rm -f "$f"
-          done
+            done
+
+            # Normalize all JPGs: auto-orient, strip EXIF, and (optionally) bound size
+            magick mogrify -auto-orient -strip -quality 85 -resize "2048x2048>" Images/Gallery/**/*.jpg
+
+
 
       - uses: actions/setup-node@v4
         with:
