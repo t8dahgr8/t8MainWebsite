@@ -1,0 +1,7 @@
+{
+  "name": "t8c4",
+  "private": true,
+  "scripts": {
+    "build:gallery": "node scripts/build-gallery.js"
+  }
+}

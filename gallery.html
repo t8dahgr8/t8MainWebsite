@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gallery – Tayte Choudhury</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{ --page-bg:#0B1D16; --surface:#0F241C; --ink:#E6EEE9; --muted:#CBE7DD; --border:#1E4033; }
+    .theme-light{ --page-bg:#F7F8F3; --surface:#FFFFFF; --ink:#0B1D16; --muted:#364A43; --border:#D9E6E1; }
+    body{ background:var(--page-bg); color:var(--ink); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+    .card{background:var(--surface); border:1px solid var(--border); border-radius:1rem; overflow:hidden; transition:transform .2s ease,border-color .2s ease;}
+    .card:hover{transform:translateY(-4px); border-color:#D4AF37;}
+    .btn{background:linear-gradient(90deg,#10936B,#D4AF37);color:#0A1512;padding:.5rem .9rem;border-radius:9999px;font-weight:600;display:inline-flex;align-items:center;gap:.45rem}
+  </style>
+</head>
+<body>
+  <main class="max-w-7xl mx-auto px-6 pt-28 pb-20">
+    <header class="mb-10">
+      <a href="index.html#home" class="text-[color:var(--muted)] hover:text-white">
+        <i class="fa-solid fa-arrow-left mr-2"></i> Back to Home
+      </a>
+      <h1 class="text-4xl font-bold mt-4">Gallery</h1>
+      <p class="text-[color:var(--muted)] mt-2">Collections from performances and travels.</p>
+    </header>
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      
+  <a href="gallery/carnegie.html" class="card block">
+    <div class="aspect-[4/3] overflow-hidden">
+      <img src="Images/Gallery/Carnegie/American_Protege_06-26-2022-2140.jpg" alt="Carnegie cover" class="w-full h-full object-cover">
+    </div>
+    <div class="p-5">
+      <h3 class="text-xl font-semibold">Carnegie</h3>
+      <div class="mt-4"><span class="btn text-sm">View Album</span></div>
+    </div>
+  </a>
+
+  <a href="gallery/korea.html" class="card block">
+    <div class="aspect-[4/3] overflow-hidden">
+      <img src="https://via.placeholder.com/800x600?text=No+Images" alt="Korea cover" class="w-full h-full object-cover">
+    </div>
+    <div class="p-5">
+      <h3 class="text-xl font-semibold">Korea</h3>
+      <div class="mt-4"><span class="btn text-sm">View Album</span></div>
+    </div>
+  </a>
+    </section>
+  </main>
+  <script>
+    const mode = localStorage.getItem('theme') || 'dark';
+    document.documentElement.classList.remove('theme-light','theme-tamu');
+    if(mode==='light') document.documentElement.classList.add('theme-light');
+    if(mode==='tamu')  document.documentElement.classList.add('theme-tamu');
+  </script>
+</body>
+</html>
