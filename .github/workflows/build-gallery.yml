@@ -19,19 +19,21 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libheif-examples imagemagick
-      - name: Convert HEIC images to JPG
+
+      - name: Convert HEIC images to JPG (auto-orient)
         run: |
             shopt -s globstar nullglob
 
-            # Convert *.heic -> *.jpg
+            # Convert *.heic -> *.jpg with auto-orient baked into the pixels
             for f in Images/Gallery/**/*.[Hh][Ee][Ii][Cc]; do
             jpg="${f%.*}.jpg"
             echo "Converting $f -> $jpg"
-            heif-convert "$f" "$jpg" || magick "$f" "$jpg"
+            # Prefer ImageMagick (handles EXIF orientation); fall back to heif-convert if needed
+            magick "$f" -auto-orient -strip -quality 85 "$jpg" || heif-convert "$f" "$jpg"
             rm -f "$f"
             done
 
-            # Normalize all JPGs: auto-orient, strip EXIF, and (optionally) bound size
+            # Safety pass: ensure **all** jpgs in the tree are auto-oriented and web-friendly
             magick mogrify -auto-orient -strip -quality 85 -resize "2048x2048>" Images/Gallery/**/*.jpg
 
 
