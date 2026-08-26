@@ -177,8 +177,8 @@
         <div class="flex items-center gap-4">
           <ul class="hidden md:flex items-center space-x-8">
             <li><a href="#home" class="nav-link active">Home</a></li>
-            <li><a href="#skills" class="nav-link">Skills</a></li>
             <li><a href="#projects" class="nav-link">Projects</a></li>
+            <li><a href="#skills" class="nav-link">Skills</a></li>
             <li><a href="gallery.html" class="nav-link">Gallery</a></li>   <!-- NEW -->
             <li><a href="#contact" class="nav-link">Contact</a></li>
           </ul>
@@ -210,8 +210,8 @@
 
       <div id="mobile-menu" class="hidden md:hidden mt-3 pb-3 border-t border-[#153D2F]">
         <a href="#home" class="block py-2 nav-link active">Home</a>
-        <a href="#skills" class="block py-2 nav-link">Skills</a>
         <a href="#projects" class="block py-2 nav-link">Projects</a>
+        <a href="#skills" class="block py-2 nav-link">Skills</a>
         <a href="gallery.html" class="block py-2 nav-link">Gallery</a> <!-- NEW -->
         <a href="#contact" class="block py-2 nav-link">Contact</a>
       </div>
@@ -318,7 +318,7 @@
           <div>
             <h3 class="text-2xl font-semibold mb-3">Interests</h3>
             <ul class="list-disc list-inside space-y-2">
-              <li>Investment Banking</li>
+              <li>Quantitative Trading</li>
               <li>Data Science</li>
               <li>Artificial Intelligence</li>
               <li>Stochastic Calculus</li>
@@ -398,8 +398,99 @@
     </div>
   </section>
 
+  <!-- Projects -->
+  <section id="projects" class="py-24 bg-darker">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">My <span class="gradient-text">Projects</span></h2>
+        <div class="w-20 h-1 bg-gradient-to-r from-primary to-gold mx-auto"></div>
+      </div>
+
+      <div class="space-y-16">
+        <section aria-labelledby="software-projects">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#0F241C] border border-[#1E4033] text-gold">
+              <i class="fa-solid fa-code" aria-hidden="true"></i>
+            </span>
+            <h3 id="software-projects" class="text-2xl font-bold">Software</h3>
+          </div>
+          <div class="rounded-xl border border-dashed border-[#1E4033] bg-[#0F241C]/40 px-6 py-10 text-center">
+            <p class="text-slate-300/85">Software projects coming soon.</p>
+          </div>
+        </section>
+
+        <section aria-labelledby="hardware-projects">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#0F241C] border border-[#1E4033] text-gold">
+              <i class="fa-solid fa-microchip" aria-hidden="true"></i>
+            </span>
+            <h3 id="hardware-projects" class="text-2xl font-bold">Hardware</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <article class="project-card rounded-xl overflow-hidden" data-href="projects/Car Shifter Light.html">
+              <div class="aspect-[16/9] overflow-hidden">
+                <img src="Documents/shifterLightMain.jpg" alt="Race car LED shifter panel" class="w-full h-full object-cover" />
+              </div>
+              <div class="p-6">
+                <h4 class="text-xl font-bold mb-2">Race Car LED Shifter Panel</h4>
+                <p class="text-slate-300/85 mb-4">Created a real-time RPM shift light with a custom PCB and calibrated LED bar.</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1 chip rounded-full text-sm">C/C++</span>
+                  <span class="px-3 py-1 chip rounded-full text-sm">Arduino</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="project-card rounded-xl overflow-hidden" data-href="projects/SEFH.html">
+              <div class="aspect-[16/9] overflow-hidden">
+                <img src="Images/2018SEFH/1.jpg" alt="2018 Science and Engineering Fair of Houston project" class="w-full h-full object-cover object-[50%_30%]" />
+              </div>
+              <div class="p-6">
+                <h4 class="text-xl font-bold mb-2">2018 Science and Engineering Fair of Houston</h4>
+                <p class="text-slate-300/85 mb-4">Compared the audio efficiency of LM386 and PAM8403 amplifiers.</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1 chip rounded-full text-sm">LM386</span>
+                  <span class="px-3 py-1 chip rounded-full text-sm">PAM8403</span>
+                  <span class="px-3 py-1 chip rounded-full text-sm">Experiment</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="project-card rounded-xl overflow-hidden" data-href="projects/NE555 Bike Blinkers.html">
+              <div class="aspect-[16/9] overflow-hidden">
+                <img src="Images/NE555TimerBikeLights/main.png" alt="NE555-powered bicycle blinkers" class="w-full h-full object-cover object-[50%_20%]" />
+              </div>
+              <div class="p-6">
+                <h4 class="text-xl font-bold mb-2">NE555 Bike Blinkers</h4>
+                <p class="text-slate-300/85 mb-4">Designed bicycle blinkers to improve rider safety.</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1 chip rounded-full text-sm">Transistors</span>
+                  <span class="px-3 py-1 chip rounded-full text-sm">NE555</span>
+                  <span class="px-3 py-1 chip rounded-full text-sm">Capacitors</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section aria-labelledby="printing-projects">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#0F241C] border border-[#1E4033] text-gold">
+              <i class="fa-solid fa-cubes" aria-hidden="true"></i>
+            </span>
+            <h3 id="printing-projects" class="text-2xl font-bold">3D Printing</h3>
+          </div>
+          <div class="rounded-xl border border-dashed border-[#1E4033] bg-[#0F241C]/40 px-6 py-10 text-center">
+            <p class="text-slate-300/85">3D printing projects coming soon.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
 <!-- Skills -->
-<section id="skills" class="py-24 bg-darker">
+<section id="skills" class="py-24 bg-dark">
   <div class="max-w-7xl mx-auto px-6">
     <div class="text-center mb-16">
       <h2 class="text-3xl md:text-4xl font-bold mb-4">My <span class="gradient-text">Skills</span></h2>
@@ -531,88 +622,6 @@
 </section>
 
 
-
-  <!-- Projects (cards open case-study pages) -->
-  <section id="projects" class="py-24 bg-dark">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">My <span class="gradient-text">Projects</span></h2>
-        <div class="w-20 h-1 bg-gradient-to-r from-primary to-gold mx-auto"></div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Shifter Light -->
-        <article class="project-card rounded-xl overflow-hidden" data-href="projects/Car Shifter Light.html">
-          <div class="aspect-[16/9] overflow-hidden">
-            <img src="Documents/shifterLightMain.jpg" class="w-full h-full object-cover" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-2">Race Car LED Shifter Panel</h3>
-            <p class="text-slate-300/85 mb-4">Created a real-time RPM shift light with a custom PCB & calibrated LED bar</p>
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="px-3 py-1 chip rounded-full text-sm">C/C++</span>
-              <span class="px-3 py-1 chip rounded-full text-sm">Arduino</span>
-              <!--<span class="px-3 py-1 chip rounded-full text-sm">MongoDB</span>--> 
-            </div>
-            <!--<div class="flex items-center gap-4">
-              <a href="#" class="text-gold hover:text-offwhite"><i class="fas fa-external-link-alt"></i> Live Demo</a>
-              <a href="#" class="text-gold hover:text-offwhite"><i class="fab fa-github"></i> Code</a>
-            <a href="projects/ecommerce.html" class="ml-auto text-gold hover:text-offwhite">Case study →</a>
-            </div>
-            -->
-          </div>
-        </article>
-
-        <!-- 2018 Science and Engineering Fair of Houston (LM386 vs PAM8403 Audio Efficiency Comparison) -->
-        <article class="project-card rounded-xl overflow-hidden" data-href="projects/SEFH.html">
-          <div class="aspect-[16/9] overflow-hidden">
-            <img src="Images/2018SEFH/1.jpg"   class="w-full h-full object-cover object-[50%_30%]" />
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-2">2018 Science and Engineering Fair of Houston </h3>
-            <p class="text-slate-300/85 mb-4">LM386 vs PAM8403 Audio Efficiency Comparison</p>
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="px-3 py-1 chip rounded-full text-sm">LM386</span>
-              <span class="px-3 py-1 chip rounded-full text-sm">PAM8403</span>
-              <span class="px-3 py-1 chip rounded-full text-sm">Experiment</span>
-            </div>
-           <!-- <div class="flex items-center gap-4">
-              <a href="#" class="text-gold hover:text-offwhite"><i class="fas fa-external-link-alt"></i> Live Demo</a>
-              <a href="#" class="text-gold hover:text-offwhite"><i class="fab fa-github"></i> Code</a>
-              <a href="projects/SEFH.html" class="ml-auto text-gold hover:text-offwhite">Case study →</a>
-            </div>-->
-          </div>
-        </article>
-
-        <!-- NE555 Bike Blinkers -->
-        <article class="project-card rounded-xl overflow-hidden" data-href="projects/NE555 Bike Blinkers.html">
-          <div class="aspect-[16/9] overflow-hidden">
-            <img src="Images/NE555TimerBikeLights/main.png"
-     class="w-full h-full object-cover object-[50%_20%]" />
-
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-2">NE555 Bike Blinkers</h3>
-            <p class="text-slate-300/85 mb-4">Designed bike blinkers for riders safety</p>
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="px-3 py-1 chip rounded-full text-sm">Transistors</span>
-              <span class="px-3 py-1 chip rounded-full text-sm">NE555</span>
-              <span class="px-3 py-1 chip rounded-full text-sm">Capacitors</span>
-            </div>
-          <!--  <div class="flex items-center gap-4">
-              <a href="#" class="text-gold hover:text-offwhite"><i class="fas fa-external-link-alt"></i> Live Demo</a>
-              <a href="#" class="text-gold hover:text-offwhite"><i class="fab fa-github"></i> Code</a>
-              <a href="projects/dashboard.html" class="ml-auto text-gold hover:text-offwhite">Case study →</a>
-            </div>-->
-          </div>
-        </article>
-      </div>
-
-      <div class="text-center mt-12">
-        <a href="#projects" class="px-8 py-3 rounded-full btn-primary font-medium inline-flex items-center">View All Projects <i class="fas fa-arrow-right ml-2"></i></a>
-      </div>
-    </div>
-  </section>
 
   <!-- Contact -->
 <section id="contact" class="py-24 bg-darker">
